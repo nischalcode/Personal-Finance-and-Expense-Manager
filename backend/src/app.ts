@@ -1,0 +1,16 @@
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import router from "./router/index.js";
+import { config } from "./config/config.js";
+import { notFoundMiddleware } from "./middleware/notFoundMiddleware.js";
+import { errorMiddleware } from "./middleware/errorMiddleware.js";
+const app = express();
+app.use(cors({ origin: config.clientUrl, credentials: true }));
+app.use(express.json({ limit: "100kb" }));
+app.use(cookieParser());
+app.get("/health", (_req, res) => res.json({ data: { status: "ok" } }));
+app.use("/api", router);
+app.use(notFoundMiddleware);
+app.use(errorMiddleware);
+export default app;
